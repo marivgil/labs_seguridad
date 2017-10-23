@@ -1,11 +1,10 @@
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.BufferedReader;
 import java.io.File;
-import java.security.InvalidKeyException;
+import java.io.FileReader;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+
 
 /**
  * Created by maricruz on 21/10/17.
@@ -14,47 +13,42 @@ public class Cifrado {
 
     private Cipher aes;
     private Key key;
+    private Quine quine;
+    private FileReader fileReader;
+    private String contenidoArchivoFuente = "";
+    private BufferedReader buffer;
 
-    /**
-     *
-     * @param c cipher
-     * @param f archivo a cifrar
-     * @return
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     */
-    public byte[] encriptado(Cipher c, File f) throws InvalidKeyException, NoSuchAlgorithmException,
-            BadPaddingException, IllegalBlockSizeException {
+    public Cifrado(){}
+
+    public byte[] encriptado(Cipher c, File f) throws Exception{
 
         this.aes = c;
-
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(128);
-        this.key = keyGenerator.generateKey();
+        this.key = new SecretKeySpec("una clave de 16 bytes".getBytes(),  0, 16, "AES");
 
         //ENCRYPT_MODE = 1
         this.aes.init(Cipher.ENCRYPT_MODE, this.key);
-        byte[] getBytes = new byte[(int) f.length()];
+
+        String linea = "";
+        String str = "";
+
+            this.fileReader = new FileReader(f);
+            this.buffer= new BufferedReader(this.fileReader);
+
+            while ((linea = this.buffer.readLine()) != null){
+                str.concat(linea);
+            }
+
+            this.fileReader.close();
+            this.buffer.close();
+
+        byte[] getBytes = new byte[str.length()];
+
         return this.aes.doFinal(getBytes);
     }
 
-    /**
-     *
-     * @param c
-     * @param f
-     * @return
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     */
-    public byte[] desencriptado(Cipher c, byte[] f) throws InvalidKeyException, BadPaddingException,
-            IllegalBlockSizeException, NoSuchAlgorithmException {
 
+    public byte[] desencriptado(Cipher c, byte[] f) throws Exception{
             this.aes = c;
-
             //DECRYPT_MODE = 2
             this.aes.init(Cipher.DECRYPT_MODE, this.key);
             return this.aes.doFinal(f);
