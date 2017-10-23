@@ -28,13 +28,21 @@ public class TestCifrado {
 
     @Test
     public void encriptado() throws Exception{
-        this.cifrado.encriptado(this.file);
+
+        byte[] encriptado = this.cifrado.encriptado(this.file);
+
+        for (byte b : encriptado) {
+            System.out.print(Integer.toHexString(0xFF & b));
+        }
+        System.out.println();
     }
 
     @Test
     public void desencriptado() throws Exception {
         byte[] enc = this.cifrado.encriptado(this.file);
-        this.cifrado.desencriptado(enc);
+        byte[] desencriptado = this.cifrado.desencriptado(enc);
+
+        System.out.println(new String(desencriptado));
 
     }
 }

@@ -27,31 +27,21 @@ public class Cifrado {
         BufferedReader buffer = new BufferedReader(fileReader);
 
         while ((linea = buffer.readLine()) != null){
-            texto.concat(linea);
+            texto=texto+linea;
         }
 
         fileReader.close();
         buffer.close();
 
         this.aes.init(Cipher.ENCRYPT_MODE, this.key);
-        byte[] encriptado = this.aes.doFinal(texto.getBytes());
-
-        for (byte b : encriptado) {
-            System.out.print(Integer.toHexString(0xFF & b));
-        }
-
-        return encriptado;
+        return this.aes.doFinal(texto.getBytes());
 
     }
 
 
-    public void desencriptado(byte[] f) throws Exception{
+    public byte[] desencriptado(byte[] f) throws Exception{
 
         this.aes.init(Cipher.DECRYPT_MODE, this.key);
-        byte[] desencriptado = this.aes.doFinal(f);
-
-        // Texto obtenido, igual al original.
-        System.out.println(new String(desencriptado));
-
+        return this.aes.doFinal(f);
     }
 }
