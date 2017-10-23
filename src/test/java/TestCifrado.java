@@ -2,7 +2,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
+import java.security.Key;
 
 
 /**
@@ -13,35 +15,26 @@ public class TestCifrado {
     private Cifrado cifrado;
     private Cipher aes;
     private File file;
+    private Key key;
 
     @Before
     public void setup() throws Exception{
-        this.cifrado = new Cifrado();
         this.aes = Cipher.getInstance("AES/ECB/PKCS5Padding");
         //elijo el archivo a cifrar de manera arbitraria
         this.file = new File("/home/maricruz/git/labs_seguridad_/HolaMundo.txt");
+        this.key = new SecretKeySpec("una clave de 16 bytes".getBytes(),  0, 16, "AES");
+        this.cifrado = new Cifrado(this.aes, this.key);
     }
 
     @Test
     public void encriptado() throws Exception{
-
-        byte[] encriptado = this.cifrado.encriptado(this.aes, this.file);
-
-        //imprimo el texto cifrado
-        for (byte b : encriptado) {
-            System.out.print(Integer.toHexString(0xFF & b));
-        }
+        this.cifrado.encriptado(this.file);
     }
 
     @Test
     public void desencriptado() throws Exception {
-
-        byte[] encriptado = this.cifrado.encriptado(this.aes, this.file);
-
-        byte[] desencriptado = this.cifrado.desencriptado(this.aes, encriptado);
-
-        //imprimo el texto cifrado
-        System.out.println(new String(desencriptado));
+        byte[] enc = this.cifrado.encriptado(this.file);
+        this.cifrado.desencriptado(enc);
 
     }
 }
